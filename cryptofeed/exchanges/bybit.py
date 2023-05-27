@@ -38,8 +38,8 @@ class Bybit(Feed):
         LIQUIDATIONS: 'liquidation'
     }
     websocket_endpoints = [
-        WebsocketEndpoint('wss://stream.bybit.com/v5/public/linear', channel_filter=(websocket_channels[L2_BOOK], websocket_channels[TRADES], websocket_channels[INDEX], websocket_channels[OPEN_INTEREST], websocket_channels[FUNDING], websocket_channels[CANDLES], websocket_channels[LIQUIDATIONS]), instrument_filter=('QUOTE', ('USD',)), sandbox='wss://stream-testnet.bybit.com/realtime', options={'compression': None}),
-        WebsocketEndpoint('wss://stream.bybit.com/v5/public/linear', channel_filter=(websocket_channels[L2_BOOK], websocket_channels[TRADES], websocket_channels[INDEX], websocket_channels[OPEN_INTEREST], websocket_channels[FUNDING], websocket_channels[CANDLES], websocket_channels[LIQUIDATIONS]), instrument_filter=('QUOTE', ('USDT',)), sandbox='wss://stream-testnet.bybit.com/realtime_public', options={'compression': None}),
+        WebsocketEndpoint('wss://stream.bybit.com/realtime', channel_filter=(websocket_channels[L2_BOOK], websocket_channels[TRADES], websocket_channels[INDEX], websocket_channels[OPEN_INTEREST], websocket_channels[FUNDING], websocket_channels[CANDLES], websocket_channels[LIQUIDATIONS]), instrument_filter=('QUOTE', ('USD',)), sandbox='wss://stream-testnet.bybit.com/realtime', options={'compression': None}),
+        WebsocketEndpoint('wss://stream.bybit.com/realtime_public', channel_filter=(websocket_channels[L2_BOOK], websocket_channels[TRADES], websocket_channels[INDEX], websocket_channels[OPEN_INTEREST], websocket_channels[FUNDING], websocket_channels[CANDLES], websocket_channels[LIQUIDATIONS]), instrument_filter=('QUOTE', ('USDT',)), sandbox='wss://stream-testnet.bybit.com/realtime_public', options={'compression': None}),
         WebsocketEndpoint('wss://stream.bybit.com/v5/private', channel_filter=(websocket_channels[ORDER_INFO], websocket_channels[FILLS]), instrument_filter=('QUOTE', ('USDT',)), sandbox='wss://stream-testnet.bybit.com/realtime_private', options={'compression': None}),
     ]
     rest_endpoints = [RestEndpoint('https://api.bybit.com', routes=Routes('/v2/public/symbols'))]
@@ -163,12 +163,21 @@ class Bybit(Feed):
         if "success" in msg:
             if msg['success']:
                 LOG.error(f"dee {msg}")
-                if msg['op'] == 'auth':
-                    LOG.debug("%s: Authenticated successful", conn.uuid)
-                elif msg['op'] == 'subscribe':
-                    LOG.debug("%s: Subscribed to channels: %s", conn.uuid, msg['args'])
+                if "request" in msg:
+                    if msg['request']['op'] == 'auth':
+                        LOG.debug("%s: Authenticated successful", conn.uuid)
+                    elif msg['request']['op'] == 'subscribe':
+                        LOG.debug("%s: Subscribed to channels: %s", conn.uuid, msg['request']['args'])
+                    else:
+                        LOG.warning("%s: Unhandled 'successs' message received", conn.uuid)
                 else:
-                    LOG.warning("%s: Unhandled 'successs' message received", conn.uuid)
+                    if msg['op'] == 'auth':
+                        LOG.debug("%s: Authenticated successful", conn.uuid)
+                    elif msg['op'] == 'subscribe':
+                        LOG.debug("%s: Subscribed to channels: %s", conn.uuid, msg['args'])
+                    else:
+                        LOG.warning("%s: Unhandled 'successs' message received", conn.uuid)
+                    
             else:
                 LOG.error("%s: Error from exchange %s", conn.uuid, msg)
         elif msg["topic"].startswith('trade'):
