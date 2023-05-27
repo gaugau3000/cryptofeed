@@ -174,7 +174,7 @@ class Bybit(Feed):
                     if msg['op'] == 'auth':
                         LOG.debug("%s: Authenticated successful", conn.uuid)
                     elif msg['op'] == 'subscribe':
-                        LOG.debug("%s: Subscribed to channels: %s", conn.uuid, msg['args'])
+                        LOG.debug("%s: Subscribed to channels: %s", conn.uuid)
                     else:
                         LOG.warning("%s: Unhandled 'successs' message received", conn.uuid)
                     
