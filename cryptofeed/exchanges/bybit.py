@@ -162,7 +162,7 @@ class Bybit(Feed):
 
         if "success" in msg:
             if msg['success']:
-                LOG.error("msg is", msg)
+                print(f"msg is {msg}")
                 if msg['request']['op'] == 'auth':
                     LOG.debug("%s: Authenticated successful", conn.uuid)
                 elif msg['request']['op'] == 'subscribe':
