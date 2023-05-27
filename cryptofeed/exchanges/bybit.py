@@ -467,7 +467,7 @@ class Bybit(Feed):
                 Decimal(data['price']),
                 Decimal(data['qty']),
                 Decimal(data['qty']) - Decimal(data['cumExecQty']),
-                self.timestamp_normalize(data.get('updatedTime') or data.get('O') or data.get('timestamp')),
+                self.timestamp_normalize(int(data.get('updatedTime')) or data.get('O') or data.get('timestamp')),
                 raw=data,
             )
             await self.callback(ORDER_INFO, oi, timestamp)
