@@ -410,7 +410,7 @@ class Bybit(Feed):
     async def _order(self, msg: dict, timestamp: float):
         
         
-        LOG.error(f"order {msg}")
+        
         """
         {
             "topic": "order",
