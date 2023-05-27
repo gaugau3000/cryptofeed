@@ -460,14 +460,14 @@ class Bybit(Feed):
             oi = OrderInfo(
                 self.id,
                 self.exchange_symbol_to_std_symbol(data['symbol']),
-                data["order_id"],
+                data["orderId"],
                 BUY if data["side"] == 'Buy' else SELL,
-                order_status[data["order_status"]],
-                LIMIT if data['order_type'] == 'Limit' else MARKET,
+                order_status[data["orderStatus"]],
+                LIMIT if data['orderType'] == 'Limit' else MARKET,
                 Decimal(data['price']),
                 Decimal(data['qty']),
                 Decimal(data['qty']) - Decimal(data['cum_exec_qty']),
-                self.timestamp_normalize(data.get('update_time') or data.get('O') or data.get('timestamp')),
+                self.timestamp_normalize(data.get('updatedTime') or data.get('O') or data.get('timestamp')),
                 raw=data,
             )
             await self.callback(ORDER_INFO, oi, timestamp)
