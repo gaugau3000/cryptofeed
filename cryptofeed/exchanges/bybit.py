@@ -162,7 +162,7 @@ class Bybit(Feed):
 
         if "success" in msg:
             if msg['success']:
-                LOG.error(f"dee {msg}")
+                
                 if "request" in msg:
                     if msg['request']['op'] == 'auth':
                         LOG.debug("%s: Authenticated successful", conn.uuid)
@@ -408,6 +408,9 @@ class Bybit(Feed):
         await self.book_callback(L2_BOOK, self._l2_book[pair], timestamp, timestamp=ts / 1000000, raw=msg, delta=delta)
 
     async def _order(self, msg: dict, timestamp: float):
+        
+        
+        LOG.error(f"order {msg}")
         """
         {
             "topic": "order",
